@@ -1,5 +1,5 @@
 module "lambda_role" {
-  source = "github.com/traveloka/terraform-aws-iam-role//modules/lambda?ref=v1.0.0"
+  source = "github.com/traveloka/terraform-aws-iam-role//modules/lambda?ref=v2.0.2"
 
   product_domain   = "${var.product_domain}"
   descriptive_name = "${var.lambda_name}"
@@ -25,7 +25,7 @@ resource "aws_iam_role_policy" "lambda_additional_policy" {
 }
 
 module "random_id" {
-  source = "github.com/traveloka/terraform-aws-resource-naming?ref=v0.7.1"
+  source = "github.com/traveloka/terraform-aws-resource-naming?ref=v0.19.1"
 
   name_prefix   = "${var.product_domain}-${var.lambda_name}"
   resource_type = "lambda_function"
@@ -58,7 +58,7 @@ resource "aws_lambda_function" "lambda_classic" {
 
   tags = "${merge(local.default_tags, var.tags)}"
 
-  environment = {
+  environment {
     variables = "${merge(var.environment_variables, map("ManagedBy", "Terraform"))}"
   }
   
@@ -109,7 +109,7 @@ resource "aws_api_gateway_method" "api_method" {
   api_key_required = "${element(var.http_methods_apikey_required, count.index)}" 
 }
 
-resource "aws_api_gateway_method_response" "200" {
+resource "aws_api_gateway_method_response" "response200" {
   count       = "${length(var.http_methods)}"
 
   rest_api_id = "${var.rest_api_id}"

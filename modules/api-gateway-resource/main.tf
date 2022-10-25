@@ -80,11 +80,11 @@ resource "aws_lambda_function" "lambda_vpc" {
   tags = "${merge(local.default_tags, var.tags)}"
 
   vpc_config {
-    subnet_ids         = ["${var.subnet_ids}"]
-    security_group_ids = ["${var.security_group_ids}"]
+    subnet_ids         = var.subnet_ids
+    security_group_ids = var.security_group_ids
   }
 
-  environment = {
+  environment {
     variables = "${merge(var.environment_variables, map("ManagedBy", "Terraform"))}"
   }
 
@@ -141,7 +141,7 @@ resource "aws_api_gateway_integration_response" "api_method_integration_response
   rest_api_id = "${var.rest_api_id}"
   resource_id = "${aws_api_gateway_resource.api_resource.id}"
   http_method = "${element(aws_api_gateway_method.api_method.*.http_method, count.index)}"
-  status_code = "${element(aws_api_gateway_method_response.200.*.status_code, count.index)}"
+  status_code = "${element(aws_api_gateway_method_response.response200.*.status_code, count.index)}"
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
